@@ -9,20 +9,24 @@ import { AlertFeed } from "@/components/AlertFeed";
 import { SimulationControls } from "@/components/SimulationControls";
 import { VehicleDetailPanel } from "@/components/VehicleDetailPanel";
 import { ModelExplainabilityModal } from "@/components/ModelExplainabilityModal";
+import { CurrentSafetyEventBanner } from "@/components/CurrentSafetyEventBanner";
 
 export const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-5">
-      {/* ROW 1: Scenario controls */}
+    <div className="space-y-4">
+      {/* ROW 1: Compact scenario controls */}
       <SimulationControls />
 
-      {/* ROW 2: V2V Transmission Hero (full width) */}
+      {/* ROW 2: Current Safety Event banner — instant one-line situation awareness */}
+      <CurrentSafetyEventBanner />
+
+      {/* ROW 3: V2V Transmission Hero (full width) */}
       <V2VTransmissionPanel />
 
-      {/* ROW 3: Message Journey pipeline bar (full width) */}
+      {/* ROW 4: Message Journey pipeline bar (full width) */}
       <MessageJourneyBar />
 
-      {/* ROW 4: Vehicle spatial visualization + Risk analysis */}
+      {/* ROW 5: Vehicle spatial visualization + Risk analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div className="lg:col-span-7">
           <FleetCanvasMap />
@@ -32,7 +36,7 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* ROW 5: Event / Message Timeline */}
+      {/* ROW 6: Event / Safety Log */}
       <AlertFeed />
 
       {/* Overlays */}

@@ -76,8 +76,8 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
       {/* Technical Footer */}
       <footer className="border-t border-[#1e2226] px-6 py-2 bg-[#040506] flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-        <div>SIH Intelligent Cooperative Collision Prevention System</div>
-        <div>Engineered V2V Safety Architecture · ESP32 + LoRa Reference</div>
+        <div>V2V Cooperative Collision Prevention · SIH 2025</div>
+        <div>ESP32 + LoRa · TTC + ML Risk · Digital Twin · Real-Time V2V Safety</div>
       </footer>
     </div>
   );

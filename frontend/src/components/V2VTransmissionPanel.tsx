@@ -398,18 +398,23 @@ export function V2VTransmissionPanel() {
 
       {/* ── Bottom split: Details + Stream Table ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
-        {/* Left: Active packet telemetry */}
+        {/* Left: LATEST PACKET detail */}
         <div>
-          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">
-            Active Message Detail
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-black text-slate-100 uppercase tracking-widest">LATEST PACKET</span>
+            {activePacket && activePacket.msg_type !== "HEARTBEAT" && (
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-900/60 text-amber-400 border border-amber-700/50 uppercase animate-pulse">
+                ACTIVE
+              </span>
+            )}
           </div>
           <LatestPacketDetail packet={activePacket} />
         </div>
 
-        {/* Right: Real-time packet stream table */}
+        {/* Right: PACKET HISTORY stream table */}
         <div>
-          <div className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2">
-            Packet Stream
+          <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-2">
+            PACKET HISTORY
           </div>
           <PacketStreamTable packets={packets} activePacket={activePacket} />
         </div>

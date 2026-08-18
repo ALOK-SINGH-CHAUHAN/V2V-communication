@@ -94,9 +94,9 @@ export const FleetCanvasMap: React.FC = () => {
               />
               <text
                 x={(scaleX(v1.last_position.x) + scaleX(v2.last_position.x)) / 2}
-                y={(scaleY(v1.last_position.y) + scaleY(v2.last_position.y)) / 2 + 3}
+                y={(scaleY(v1.last_position.y) + scaleY(v2.last_position.y)) / 2 + 4}
                 fill={interDistance < 30 ? "#ef4444" : "#38bdf8"}
-                fontSize="11"
+                fontSize="13"
                 fontFamily="monospace"
                 fontWeight="bold"
                 textAnchor="middle"
@@ -166,9 +166,9 @@ export const FleetCanvasMap: React.FC = () => {
                 {/* Vehicle ID Label */}
                 <text
                   x={cx}
-                  y={cy + 4}
+                  y={cy + 5}
                   fill="#ffffff"
-                  fontSize="11"
+                  fontSize="13"
                   fontFamily="monospace"
                   fontWeight="bold"
                   textAnchor="middle"
