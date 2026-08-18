@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useFleet } from "@/context/FleetContext";
+import { usePresentationContext } from "@/context/PresentationContext";
 import { AlertCircle, ShieldCheck, WifiOff, Radio } from "lucide-react";
 
 function useRelativeTime(ts: number | null): string {
@@ -21,7 +22,14 @@ function useRelativeTime(ts: number | null): string {
 }
 
 export const CurrentSafetyEventBanner: React.FC = () => {
-  const { alertPacket, decisions, vehicles } = useFleet();
+  const fleet = useFleet();
+  const { mode, presented } = usePresentationContext();
+
+  // In presentation modes, read from the staged snapshot; in LIVE, read raw fleet
+  const src = mode === "LIVE" ? fleet : presented;
+  const vehicles = "vehicles" in src ? src.vehicles : fleet.vehicles;
+  const alertPacket = src.alertPacket;
+  const decisions = "decisions" in src ? src.decisions : fleet.decisions;
 
   const v1 = vehicles.find((v) => v.vehicle_id === "V001");
   const latestDecision = decisions[0] ?? null;

@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFleet } from "@/context/FleetContext";
+import { usePresentationContext } from "@/context/PresentationContext";
 import {
   AlertCircle,
   AlertTriangle,
@@ -22,6 +23,36 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+
+// ─── Animated number hook ─────────────────────────────────────────────────────
+// Smoothly interpolates displayed value toward target over ~600ms
+function useAnimatedNumber(target: number, durationMs = 600): number {
+  const [display, setDisplay] = useState(target);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number>(0);
+  const fromRef = useRef<number>(target);
+
+  useEffect(() => {
+    fromRef.current = display;
+    startRef.current = performance.now();
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    const animate = (now: number) => {
+      const elapsed = now - startRef.current;
+      const progress = Math.min(elapsed / durationMs, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(fromRef.current + (target - fromRef.current) * eased);
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target, durationMs]);
+
+  return display;
+}
+
 
 // ─── Risk tier helper ─────────────────────────────────────────────────────────
 
@@ -137,14 +168,26 @@ function TtcRiskRelationship({ trendLabel }: { trendLabel?: string }) {
 
 export const RiskAnalysisPanel: React.FC = () => {
   const { vehicles, riskHistory, decisions } = useFleet();
+  const { mode, presented } = usePresentationContext();
 
+  // Use live vehicles for structure (comm lost detection), but staged risk values for display
   const v2 = vehicles.find((v) => v.vehicle_id === "V002") || vehicles[0];
   const v1 = vehicles.find((v) => v.vehicle_id === "V001");
 
   if (!v2) return null;
 
   const isCommLost = v1?.connectivity_status === "COMMUNICATION_LOST";
-  const tier = getRiskTier(v2.last_risk_score);
+
+  // In presentation mode, use staged risk/TTC; in LIVE use real-time
+  const displayRiskTarget = mode === "LIVE" ? v2.last_risk_score : presented.riskScore;
+  const displayTTC = mode === "LIVE" ? v2.last_ttc : presented.ttc;
+
+  // Animated risk score (smooth roll instead of instant jump)
+  // Slower animation in presentation modes so judges can watch it change
+  const animDuration = mode === "LIVE" ? 400 : 1200;
+  const animatedRisk = useAnimatedNumber(displayRiskTarget, animDuration);
+
+  const tier = getRiskTier(animatedRisk);
   const history = (riskHistory["V002"] || []).map((h) => ({
     time: new Date(h.timestamp).toLocaleTimeString([], {
       hour12: false,
@@ -155,9 +198,9 @@ export const RiskAnalysisPanel: React.FC = () => {
   }));
 
   const decision = v2.last_decision;
-  const latestFull = decisions[0];
+  const latestFull = (mode === "LIVE" ? decisions : presented.decisions)[0];
 
-  // V2V Early Warning values (from latest SafetyDecision)
+  // V2V Early Warning values
   const v2vGain = latestFull?.v2v_early_warning_gain_s ?? 0;
   const localTtc = latestFull?.local_detection_ttc_s ?? 0;
   const v2vTtc = latestFull?.v2v_detection_ttc_s ?? 0;
@@ -219,14 +262,14 @@ export const RiskAnalysisPanel: React.FC = () => {
                   className="text-4xl font-extrabold font-mono leading-none mt-1"
                   style={{ color: tier.color }}
                 >
-                  {v2.last_risk_score.toFixed(0)}
+                  {animatedRisk.toFixed(0)}
                   <span className="text-sm font-normal text-zinc-600 ml-1">/ 100</span>
                 </div>
               </div>
               <div>
                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider">TIME-TO-COLLISION</span>
                 <div className="text-4xl font-extrabold font-mono leading-none mt-1 text-zinc-100">
-                  {v2.last_ttc < 900 ? `${v2.last_ttc.toFixed(1)}s` : "∞"}
+                  {displayTTC < 900 ? `${displayTTC.toFixed(1)}s` : "∞"}
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useFleet } from "@/context/FleetContext";
+import { usePresentationContext } from "@/context/PresentationContext";
 import { V2VPacket, MsgType } from "@/types";
 import { Radio, WifiOff, CheckCircle2 } from "lucide-react";
 
@@ -72,9 +73,11 @@ function MsgTypeBadge({ type }: { type: MsgType }) {
 function LoraBeam({
   packet,
   commLost,
+  beamDurationMs,
 }: {
   packet: V2VPacket | null;
   commLost: boolean;
+  beamDurationMs: number;
 }) {
   const [animKey, setAnimKey] = useState(0);
   const prevIdRef = useRef<string | null>(null);
@@ -148,7 +151,7 @@ function LoraBeam({
                     background: `linear-gradient(90deg, transparent, ${cfg.color}, ${cfg.color})`,
                     boxShadow: `0 0 12px ${cfg.glow}`,
                     width: "100%",
-                    animation: "beamSweep 0.7s ease-out forwards",
+                    animation: `beamSweep ${(beamDurationMs / 1000).toFixed(2)}s ease-out forwards`,
                   }}
                 />
               )}
@@ -363,6 +366,7 @@ function PacketStreamTable({
 
 export function V2VTransmissionPanel() {
   const { packets, alertPacket, vehicles } = useFleet();
+  const { beamDurationMs } = usePresentationContext();
 
   // Pick displayed packet: alertPacket (locked alert) or fallback to latest packet
   const activePacket = alertPacket || (packets.length > 0 ? packets[0] : null);
@@ -394,7 +398,7 @@ export function V2VTransmissionPanel() {
       </div>
 
       {/* ── Animated Beam Visualizer ── */}
-      <LoraBeam packet={activePacket} commLost={commLost} />
+      <LoraBeam packet={activePacket} commLost={commLost} beamDurationMs={beamDurationMs} />
 
       {/* ── Bottom split: Details + Stream Table ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
