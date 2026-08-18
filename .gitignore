@@ -1,0 +1,20 @@
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+*.log
+
+# Python / Virtual Environment
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.pytest_cache/
+simulator/__pycache__/
+simulator/*.pyc
+
+# Environment & IDE
+.env
+.env.local
+.DS_Store
+.vscode/
+.idea/
