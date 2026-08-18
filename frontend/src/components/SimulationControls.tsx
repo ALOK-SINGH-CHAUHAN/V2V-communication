@@ -18,7 +18,7 @@ export const SimulationControls: React.FC = () => {
   const scenarios = [
     {
       id: "full_demo",
-      label: "Full Interactive Demo",
+      label: "END-TO-END TEST",
       desc: "Auto-sequence covering all 5 situations (Cruising → Hard Brake → Reaction → Comm Loss → Re-sync)",
       featured: true,
     },

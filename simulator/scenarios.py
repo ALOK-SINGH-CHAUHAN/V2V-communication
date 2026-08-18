@@ -131,34 +131,33 @@ def update_scenario_step(
             v1_msg, v2_msg = "HEARTBEAT", "HEARTBEAT"
             send_v1 = True
 
-        elif t_phase < 10.0:
-            # Phase 2: Sudden Hard Brake
+        elif t_phase < 11.0:
+            # Phase 2: Sudden Hard Brake (Slowing physics progression across 5-6s)
             phase_desc = "Phase 2/5: Sudden Hard Brake — BRAKE_ALERT Transmitted over LoRa"
-            v1.accel_x = -6.5
-            v1.speed_mps = max(0.0, v1.speed_mps - 6.5 * dt)
+            v1.accel_x = -3.8  # Gradual deceleration to allow natural TTC decrease across 5-6 seconds
+            v1.speed_mps = max(0.0, v1.speed_mps - 3.8 * dt)
             v1.event_flag = "brake"
             v2.accel_x = 0.0
             v2.event_flag = "heartbeat"
             link = _link_quality("brake")
-            # Strict Phase Rule: EMERGENCY_ALERT ONLY in peak danger (t > 8.5s)
-            v1_msg = "EMERGENCY_ALERT" if t_phase > 8.5 else "BRAKE_ALERT"
+            v1_msg = "BRAKE_ALERT"  # Always BRAKE_ALERT per SIH requirement
             v2_msg = "HEARTBEAT"
             send_v1 = True
 
-        elif t_phase < 16.0:
+        elif t_phase < 17.0:
             # Phase 3: Coordinated Reaction & Resolution
             phase_desc = "Phase 3/5: Coordinated V002 Response — Risk Resolving & Collision Avoided"
             v1.accel_x = 0.0
             v1.speed_mps = max(0.0, v1.speed_mps)
             v1.event_flag = "heartbeat"
-            v2.accel_x = -5.0
-            v2.speed_mps = max(0.0, v2.speed_mps - 5.0 * dt)
+            v2.accel_x = -4.5
+            v2.speed_mps = max(0.0, v2.speed_mps - 4.5 * dt)
             v2.event_flag = "brake"
             link = _link_quality("response")
             v1_msg, v2_msg = "HEARTBEAT", "HEARTBEAT"
             send_v1 = True
 
-        elif t_phase < 23.0:
+        elif t_phase < 24.0:
             # Phase 4: Communication Loss (Progressive decay -> Timeout)
             phase_desc = "Phase 4/5: Communication Loss — V001 Link Degrading → COMM_LOST"
             v1.speed_mps = min(15.3, v1.speed_mps + 1.0 * dt)
@@ -168,7 +167,7 @@ def update_scenario_step(
             v1.event_flag = "none"
             v2.event_flag = "heartbeat"
             
-            if t_phase < 18.0:
+            if t_phase < 19.0:
                 link = _link_quality("degraded")
                 v1_msg, v2_msg = "HEARTBEAT", "HEARTBEAT"
                 send_v1 = True
@@ -248,19 +247,19 @@ def update_scenario_step(
             v1_msg, v2_msg = "HEARTBEAT", "HEARTBEAT"
         elif t_phase < 10.0:
             phase_desc = "Hard Brake Scenario — V001 Hard Braking (BRAKE_ALERT)"
-            v1.accel_x = -6.5
-            v1.speed_mps = max(0.0, v1.speed_mps - 6.5 * dt)
+            v1.accel_x = -3.8  # Smooth deceleration over 6s
+            v1.speed_mps = max(0.0, v1.speed_mps - 3.8 * dt)
             v1.event_flag = "brake"
             v2.accel_x = 0.0
             v2.event_flag = "heartbeat"
             link = _link_quality("brake")
-            v1_msg = "EMERGENCY_ALERT" if t_phase > 8.5 else "BRAKE_ALERT"
+            v1_msg = "BRAKE_ALERT"  # Always BRAKE_ALERT
             v2_msg = "HEARTBEAT"
         elif t_phase < 16.0:
             phase_desc = "Hard Brake Scenario — V002 Brakes & Resolves Risk"
             v1.accel_x = 0.0
-            v2.accel_x = -5.0
-            v2.speed_mps = max(0.0, v2.speed_mps - 5.0 * dt)
+            v2.accel_x = -4.5
+            v2.speed_mps = max(0.0, v2.speed_mps - 4.5 * dt)
             v2.event_flag = "brake"
             link = _link_quality("response")
             v1_msg, v2_msg = "HEARTBEAT", "HEARTBEAT"

@@ -55,11 +55,11 @@ function MsgTypeBadge({ type }: { type: MsgType }) {
   const cfg = MSG_CONFIG[type];
   return (
     <span
-      className="px-2 py-0.5 rounded text-xs font-bold tracking-wider"
+      className="px-2.5 py-1 rounded text-sm font-black tracking-wider"
       style={{
         color: cfg.color,
         background: cfg.glow,
-        border: `1px solid ${cfg.color}40`,
+        border: `1px solid ${cfg.color}60`,
       }}
     >
       {cfg.label}

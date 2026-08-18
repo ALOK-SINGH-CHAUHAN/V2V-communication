@@ -144,7 +144,7 @@ export const AlertFeed: React.FC = () => {
       // Update tier tracker
       prevRiskTierRef.current[latest.vehicle_id] = curTier;
 
-      // Only show interesting decisions in the feed (skip SAFE spam)
+      // Filter out raw HEARTBEAT spam; keep log strictly focused on safety milestones
       if (INTERESTING.has(curTier)) {
         newEntries.push({
           id: `dec-${latest.vehicle_id}-${latest.timestamp}`,

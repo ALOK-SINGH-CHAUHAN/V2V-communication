@@ -177,24 +177,24 @@ export const RiskAnalysisPanel: React.FC = () => {
           <div className="grid grid-cols-3 gap-3 pt-1">
             {/* Risk Score */}
             <div>
-              <span className="text-[10px] text-zinc-400 uppercase">ML RISK SCORE</span>
-              <div className="text-2xl font-bold font-mono" style={{ color: tier.color }}>
-                {v2.last_risk_score.toFixed(0)} <span className="text-xs font-normal text-zinc-500">/ 100</span>
+              <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">ML RISK SCORE</span>
+              <div className="text-4xl font-extrabold font-mono leading-none mt-1" style={{ color: tier.color }}>
+                {v2.last_risk_score.toFixed(0)} <span className="text-sm font-normal text-zinc-500">/ 100</span>
               </div>
             </div>
 
             {/* TTC */}
             <div>
-              <span className="text-[10px] text-zinc-400 uppercase">TIME-TO-COLLISION</span>
-              <div className="text-2xl font-bold font-mono text-zinc-100">
+              <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">TIME-TO-COLLISION</span>
+              <div className="text-4xl font-extrabold font-mono leading-none mt-1 text-zinc-100">
                 {v2.last_ttc < 900 ? `${v2.last_ttc.toFixed(1)}s` : "∞"}
               </div>
             </div>
 
             {/* Risk Trend */}
             <div>
-              <span className="text-[10px] text-zinc-400 uppercase">RISK TRAJECTORY</span>
-              <div className="mt-1 text-xs">{renderRiskTrend(decision?.risk_trend_label)}</div>
+              <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">RISK TRAJECTORY</span>
+              <div className="mt-2 text-sm">{renderRiskTrend(decision?.risk_trend_label)}</div>
             </div>
           </div>
         )}
